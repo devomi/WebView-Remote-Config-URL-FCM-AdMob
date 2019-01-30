@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Simplify</string>
+    <string name="action_home">Home</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_forward">Forward</string>
+    <string name="action_backward">Backward</string>
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+
+</resources>
