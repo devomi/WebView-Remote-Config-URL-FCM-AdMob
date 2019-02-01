@@ -1,6 +1,7 @@
 package xposed73.com.simplifywebview.Activities;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -11,9 +12,10 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +35,6 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import java.net.URL;
 
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 if(intent.getAction().equals(Config.STR_PUSH))
                 {
                     String message = intent.getStringExtra(Config.STR_MESSAGE);
-                    showNotification("Magical Methods",message);
+                    showNotification("Open in App",message);
                 }
             }
         };
@@ -273,12 +274,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         dialog = new ProgressDialog(this);
         if(intent.getStringExtra(Config.STR_KEY)!= null){
-            dialog.show();
-            dialog.setMessage("Loading,Please wait...");
             myWebView.loadUrl(intent.getStringExtra(Config.STR_KEY));
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void showNotification(String title, String message) {
         Intent intent = new Intent(getBaseContext(),MainActivity.class);
         intent.putExtra(Config.STR_KEY,message);
@@ -294,6 +294,26 @@ public class MainActivity extends AppCompatActivity {
                 .setContentIntent(contentIntent);
         NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(1,builder.build());
+
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            builder.setChannelId("43002");
+        }
+
+        //NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel notificationChannel = new NotificationChannel("43002", "Standard", NotificationManager.IMPORTANCE_HIGH);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+        }
+
+        Notification n = builder.build();
+
+        if(notificationManager != null){
+            notificationManager.notify(0,n);
+        }
+
 
     }
 
